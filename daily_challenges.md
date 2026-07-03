@@ -41,7 +41,7 @@
   --cidr-block 172.31.100.0/24 \
   --availability-zone us-east-1a \
   --region us-east-1
-3. naming the subnet using the subnet-id: aws ec2 create-tags \
+3. Naming the subnet using the subnet-id: aws ec2 create-tags \
   --resources <SUBNET_ID> \
   --tags Key=Name,Value=xfusion-subnet \
   --region us-east-1
@@ -212,5 +212,23 @@
 7. Verify -> aws ec2 describe-network-interfaces \
   --network-interface-ids <ENI_ID> \
   --query "NetworkInterfaces[].{Status:Status,AttachmentStatus:Attachment.Status,InstanceId:Attachment.InstanceId}" \
+  --output table \
+  --region us-east-1
+
+## Attach volume to EC2 instance
+1. Get the EC2 Instance ID.
+2. Get Volume ID -> aws ec2 describe-volumes \
+  --filters "Name=tag:Name,Values=<volume-name>" \
+  --query "Volumes[].VolumeId" \
+  --output text \
+  --region us-east-1
+3. Attach -> aws ec2 attach-volume \
+  --volume-id <VOLUME_ID> \
+  --instance-id <INSTANCE_ID> \
+  --device <device-name> \
+  --region us-east-1
+4. Verify -> aws ec2 describe-volumes \
+  --volume-ids <VOLUME_ID> \
+  --query "Volumes[].Attachments[].{State:State,Device:Device,Instance:InstanceId}" \
   --output table \
   --region us-east-1

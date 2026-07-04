@@ -232,3 +232,19 @@
   --query "Volumes[].Attachments[].{State:State,Device:Device,Instance:InstanceId}" \
   --output table \
   --region us-east-1
+
+## Create AMI (Amazon Machine Image) for existing EC2 instance
+1. Get Instance ID
+2. Create AMI -> aws ec2 create-image \
+  --instance-id <INSTANCE_ID> \
+  --name "<ami-name>" \
+  --region us-east-1
+   We will get the image ID from this.
+3. Use the wait command. This command blocks until the AMI state becomes available. -> aws ec2 wait image-available \
+  --image-ids <AMI_ID> \
+  --region us-east-1
+4. Verify if in available state -> aws ec2 describe-images \
+  --image-ids <AMI_ID> \
+  --query "Images[].{Name:Name,State:State}" \
+  --output table \
+  --region us-east-1

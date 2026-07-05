@@ -248,3 +248,17 @@
   --query "Images[].{Name:Name,State:State}" \
   --output table \
   --region us-east-1
+
+## Delete EC2 instance
+1. Get the instance ID with the instance name.
+2. Terminate the instance -> aws ec2 terminate-instances \
+  --instance-ids <INSTANCE_ID> \
+  --region us-east-1
+3. Wait until it's terminated -> aws ec2 wait instance-terminated \
+  --instance-ids <INSTANCE_ID> \
+  --region us-east-1
+4. Verify the output, should be "terminated" -> aws ec2 describe-instances \
+  --instance-ids <INSTANCE_ID> \
+  --query "Reservations[].Instances[].State.Name" \
+  --output text \
+  --region us-east-1

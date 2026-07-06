@@ -262,3 +262,20 @@
   --query "Reservations[].Instances[].State.Name" \
   --output text \
   --region us-east-1
+
+## Create Snapshot of volume
+1. Get Volume ID -> aws ec2 describe-volumes \
+  --filters "Name=tag:Name,Values=xfusion-vol" \
+  --query "Volumes[].VolumeId" \
+  --output text \
+  --region us-east-1
+2. Create a snapshot with a name and description. We get a snapshot ID in return -> aws ec2 create-snapshot \
+  --volume-id <VOLUME_ID> \
+  --description "<description>" \
+  --tag-specifications 'ResourceType=snapshot,Tags=[{Key=Name,Value=<snapshot-name>}]' \
+  --region us-east-1
+3. Verify the snapshot -> aws ec2 describe-snapshots \
+  --snapshot-ids <SNAPSHOT_ID> \
+  --query "Snapshots[].{Name:Tags[?Key=='Name']|[0].Value,Description:Description,State:State}" \
+  --output table \
+  --region us-east-1

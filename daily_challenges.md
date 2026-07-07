@@ -279,3 +279,11 @@
   --query "Snapshots[].{Name:Tags[?Key=='Name']|[0].Value,Description:Description,State:State}" \
   --output table \
   --region us-east-1
+
+## Create IAM User
+1. IAM is a global service. We do not specify the region for it.
+2. An IAM User is an individual identity in AWS created for a person or application. It has its own username, password, access keys, and permissions.
+3. Create user -> aws iam create-user \
+  --user-name <user-name>
+4. Verify -> aws iam get-user \
+  --user-name <user-name>

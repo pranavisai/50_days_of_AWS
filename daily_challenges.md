@@ -287,3 +287,11 @@
   --user-name <user-name>
 4. Verify -> aws iam get-user \
   --user-name <user-name>
+
+## Create an IAM group
+1. An IAM Group is a collection of IAM users. Permissions are assigned to the group, and all users in the group inherit those permissions. This makes permission management easier.
+2. Create group -> aws iam create-group \
+  --group-name <group-name>
+3. Verify -> aws iam get-group \
+  --group-name <group-name>
+   

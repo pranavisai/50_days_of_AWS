@@ -294,4 +294,30 @@
   --group-name <group-name>
 3. Verify -> aws iam get-group \
   --group-name <group-name>
-   
+
+## Attaching IAM policy to IAM User
+1. Create the policy file ->
+```
+   cat > ec2-readonly.json <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "ec2:Describe*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+```
+2. This allows users to view EC2 Instances, AMIs, Snapshots, Volumes, security groups, key pairs, and other EC2 resources (read-only)
+3. Create policy -> aws iam create-policy \
+  --policy-name <policy-name> \
+  --policy-document file://ec2-readonly.json
+4. Verify -> aws iam list-policies \
+  --scope Local \
+  --query "Policies[?PolicyName=='<policy-name>']" \
+  --output table

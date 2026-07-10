@@ -321,3 +321,26 @@ EOF
   --scope Local \
   --query "Policies[?PolicyName=='<policy-name>']" \
   --output table
+
+## Connect the IAM User to the IAM Policy
+An ARN (Amazon Resource Name) is the unique identifier for an AWS resource. AWS uses ARNs to identify the exact resource—such as a policy, bucket, instance, or role—when performing actions or granting permissions. When attaching a policy to a user, we provide the policy's ARN so AWS knows precisely which policy to attach.
+### AWS ARN Structure example
+
+```text
+arn:aws:iam::359361141032:policy/<any-resource-name>
+ │   │   │  │       │                  └── Resource Name (policy/iampolicy_ravi)
+ │   │   │  │       └───────────────────── AWS Account ID (359361141032)
+ │   │   │  └───────────────────────────── AWS Region (Blank for global IAM resources)
+ │   │   └──────────────────────────────── AWS Service (iam)
+ │   └──────────────────────────────────── AWS Partition (aws)
+ └──────────────────────────────────────── ARN Prefix (arn)
+```
+1. Get the policy ARN -> aws iam list-policies \
+  --scope Local \
+  --query "Policies[?PolicyName=='<policy-name>'].Arn" \
+  --output text
+2. Attach the policy to the user -> aws iam attach-user-policy \
+  --user-name <iam-user-name> \
+  --policy-arn <POLICY_ARN>
+3. Verify -> aws iam list-attached-user-policies \
+  --user-name <iam-user-name>

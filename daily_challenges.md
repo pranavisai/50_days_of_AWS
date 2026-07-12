@@ -344,3 +344,55 @@ arn:aws:iam::359361141032:policy/<any-resource-name>
   --policy-arn <POLICY_ARN>
 3. Verify -> aws iam list-attached-user-policies \
   --user-name <iam-user-name>
+
+## Create IAM Role for EC2 with Policy Attachment
+1. An IAM Role is an AWS identity with permissions that can be assumed temporarily by AWS services (such as EC2, Lambda) or users. Unlike an IAM user, a role does not have long-term credentials like passwords or access keys.
+2. The trust policy defines who is allowed to assume the role.
+3. Create trust policy -> cat > trust-policy.json <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
+4. Create IAM role -> aws iam create-role \
+  --role-name <role-name> \
+  --assume-role-policy-document file://trust-policy.json
+5. Get the policy ARN -> aws iam list-policies \
+  --scope Local \
+  --query "Policies[?PolicyName=='<policy-name>'].Arn" \
+  --output text
+6. Attach the policy -> aws iam attach-role-policy \
+  --role-name <role-name> \
+  --policy-arn <POLICY_ARN>
+
+## Create EC2 instance and attach the elastic IP address
+1. Find Linux AMI and copy the AMI ID -> aws ec2 describe-images \
+  --owners 099720109477 \
+  --filters "Name=name,Values=ubuntu/images/hvm-ssd/ubuntu-*-amd64-server-*" \
+            "Name=state,Values=available" \
+  --query "sort_by(Images,&CreationDate)[-1].ImageId" \
+  --output text \
+  --region us-east-1
+2. Launch EC2 instance with the AMI ID -> aws ec2 run-instances \
+  --image-id <AMI_ID> \
+  --instance-type t2.micro \
+  --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=<Instance-name>}]' \
+  --region us-east-1
+3. Allocate an elastic IP and get the allocation ID -> aws ec2 allocate-address \
+  --domain vpc \
+  --region us-east-1
+4. Name the elastic IP -> aws ec2 create-tags \
+  --resources <ALLOCATION_ID> \
+  --tags Key=Name,Value=<elastic-ip-name> \
+  --region us-east-1
+5. Associate elastic IP -> aws ec2 associate-address \
+  --instance-id <INSTANCE_ID> \
+  --allocation-id <ALLOCATION_ID> \
+  --region us-east-1

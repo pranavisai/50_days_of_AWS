@@ -396,3 +396,9 @@ arn:aws:iam::359361141032:policy/<any-resource-name>
   --instance-id <INSTANCE_ID> \
   --allocation-id <ALLOCATION_ID> \
   --region us-east-1
+
+
+## Day 23: Data Migration Between S3 Buckets Using AWS CLI
+1. Make bucket: ``` aws s3 mb s3://your--bucket-name --region us-east-1```
+2. Copy data from source bucket to destination bucket: ``` aws s3 sync s3://source-bucket-name s3://destination-bucket-name ```
+3. Ensure consistency: ``` aws s3 sync s3://source-bucket-name s3://destination-bucket-name --delete ```
